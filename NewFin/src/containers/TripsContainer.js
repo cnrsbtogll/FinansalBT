@@ -1,127 +1,111 @@
-import React, {Component} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  TextInput,
-  StatusBar,
-  Button,
-} from 'react-native';
-import Header from './header';
+import React from "react";
+import { StyleSheet, Text, View, StatusBar, SafeAreaView } from "react-native";
 
-export default class TripsContainer extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      input1: '',
-      input2: '',
-      result:''
-    };
-    this.sum=this.sum.bind(this);
-    this.deduct=this.deduct.bind(this);
-    this.mult=this.mult.bind(this);
-    this.div=this.div.bind(this);
-  }
-  sum(){
-    const number1=parseFloat(this.state.input1);
-    const number2=parseFloat(this.state.input2);
-    const result=number1+number2;
-    this.setState({
-      result:result
-    })
-  }
-
-  deduct(){
-    const number1=parseFloat(this.state.input1);
-    const number2=parseFloat(this.state.input2);
-    const result=number1-number2;
-    this.setState({
-      result:result
-    })
-  }
-
-  mult(){
-    const number1=parseFloat(this.state.input1);
-    const number2=parseFloat(this.state.input2);
-    const result=number1*number2;
-    this.setState({
-      result:result
-    })
-  }
-
-  div(){
-    const number1=parseFloat(this.state.input1);
-    const number2=parseFloat(this.state.input2);
-    const result=number1/number2;
-    this.setState({
-      result:result
-    })
-  }
-  render() {
-    return (
-      <>
-        <StatusBar barStyle="dark-content" />
-        <View style={styles.container}>
-          <Header headerText='Simple Calculator'/>
-          <View style={styles.contentWrapper}>
-            <TextInput
-              style={styles.input}
-              placeholder="First Number"
-              onChangeText={text => {
-                this.setState({
-                  input1: text,
-                });
-              }}
-              value={this.state.input1}></TextInput>
-
-            <View style={styles.buttonWrapper}>
-              <Button onPress={this.sum} color="#841584" title="+"></Button>
-              <Button onPress={this.deduct} color="#841584" title="-"></Button>
-              <Button onPress={this.mult} color="#841584" title="*"></Button>
-              <Button onPress={this.div} color="#841584" title="/"></Button>
-            </View> 
-
-            <TextInput
-              style={styles.input}
-              placeholder="Second Number"
-              onChangeText={text => {
-                this.setState({
-                  input2: text,
-                });
-              }}
-              value={this.state.input2}></TextInput>
-            <Text style={styles.simpleText}>
-              Result: {this.state.result}
-            </Text>
-          </View>
-        </View>
-      </>
-    );
-  }
-}
+import Row from "../components/Row";
+import Button from "../components/Button";
+import calculator, { initialState } from "../util/calculator";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
+    backgroundColor: "#202020",
+    justifyContent: "flex-end"
   },
-  contentWrapper: {
-    padding: 20,
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  buttonWrapper:{
-    flexDirection:'row',
-    justifyContent:'space-evenly',
-    
-  },
-  input: {
-    height: 40,
-  },
-  simpleText: {
-    height: 30,
-    fontSize: 14,
-  },
-  
+  value: {
+    color: "#fff",
+    fontSize: 40,
+    textAlign: "right",
+    marginRight: 20,
+    marginBottom: 10
+  }
 });
+
+export default class TripsContainer extends React.Component {
+  state = initialState;
+
+  handleTap = (type, value) => {
+    this.setState(state => calculator(type, value, state));
+  };
+
+  render() {
+    return (
+      <View style={styles.container}>
+        <StatusBar barStyle="light-content" />
+        <SafeAreaView>
+          <Text style={styles.value}>
+            {parseFloat(this.state.currentValue).toLocaleString()}
+          </Text>
+          <Row>
+            <Button
+              text="C"
+              theme="secondary"
+              onPress={() => this.handleTap("clear")}
+            />
+            <Button
+              text="+/-"
+              theme="secondary"
+              onPress={() => this.handleTap("posneg")}
+            />
+            <Button
+              text="%"
+              theme="secondary"
+              onPress={() => this.handleTap("percentage")}
+            />
+            <Button
+              text="/"
+              theme="accent"
+              onPress={() => this.handleTap("operator", "/")}
+            />
+          </Row>
+
+          <Row>
+            <Button text="7" onPress={() => this.handleTap("number", 7)} />
+            <Button text="8" onPress={() => this.handleTap("number", 8)} />
+            <Button text="9" onPress={() => this.handleTap("number", 9)} />
+            <Button
+              text="x"
+              theme="accent"
+              onPress={() => this.handleTap("operator", "*")}
+            />
+          </Row>
+
+          <Row>
+            <Button text="4" onPress={() => this.handleTap("number", 4)} />
+            <Button text="5" onPress={() => this.handleTap("number", 5)} />
+            <Button text="6" onPress={() => this.handleTap("number", 6)} />
+            <Button
+              text="-"
+              theme="accent"
+              onPress={() => this.handleTap("operator", "-")}
+            />
+          </Row>
+
+          <Row>
+            <Button text="1" onPress={() => this.handleTap("number", 1)} />
+            <Button text="2" onPress={() => this.handleTap("number", 2)} />
+            <Button text="3" onPress={() => this.handleTap("number", 3)} />
+            <Button
+              text="+"
+              theme="accent"
+              onPress={() => this.handleTap("operator", "+")}
+            />
+          </Row>
+
+          <Row>
+            <Button
+              text="0"
+              size="double"
+              onPress={() => this.handleTap("number", 0)}
+            />
+            <Button text="." onPress={() => this.handleTap("number", ".")} />
+            <Button
+              text="="
+              theme="accent"
+              onPress={() => this.handleTap("equal")}
+            />
+          </Row>
+        </SafeAreaView>
+      </View>
+    );
+  }
+}
